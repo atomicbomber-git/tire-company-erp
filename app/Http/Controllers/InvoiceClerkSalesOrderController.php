@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\SalesOrder;
 use Illuminate\Http\Request;
 
-class InvoiceClerkSalesOrder extends Controller
+class InvoiceClerkSalesOrderController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,7 +14,15 @@ class InvoiceClerkSalesOrder extends Controller
      */
     public function index()
     {
-        //
+        $sales_orders = SalesOrder::query()
+            ->with("customer")
+            ->where("is_approved", false)
+            ->orderByDesc("created_at")
+            ->get();
+
+        return response()->view("invoice-clerk-sales-order.index", compact(
+            "sales_orders"
+        ));
     }
 
     /**

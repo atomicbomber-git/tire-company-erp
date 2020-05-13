@@ -135,7 +135,7 @@
                         @endif
 
                         @if ((auth()->user()->type ?? null) === \App\Constants\UserType::INVOICE_CLERK)
-                            <a href="{{ route("salesperson-invoice-clerk.index") }}"
+                            <a href="{{ route("invoice-clerk-sales-order.index") }}"
                                class="nav-link {{ \Illuminate\Support\Facades\Route::is('invoice-clerk-sales-order.*') ? "active" : "" }}">
                                 Sales Orders
                             </a>

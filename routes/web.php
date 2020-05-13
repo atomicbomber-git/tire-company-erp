@@ -2,10 +2,11 @@
 
 use App\Helpers\DefaultRouteNameResolver;
 use App\Http\Controllers\CustomerController;
-use App\Http\Controllers\InvoiceClerkSalesOrder;
+use App\Http\Controllers\InvoiceClerkSalesOrderController;
+use App\Http\Controllers\InvoiceClerkSalesOrderPriceInputController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\SalesOrderController;
-use App\Http\Controllers\SalespersonSalesOrder;
+use App\Http\Controllers\SalespersonSalesOrderController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -36,5 +37,11 @@ Route::get('/', function () {
 Route::resource('customer', class_basename(CustomerController::class));
 Route::resource('sales-order', class_basename(SalesOrderController::class));
 Route::resource('item', class_basename(ItemController::class));
-Route::resource('salesperson-sales-order', class_basename(SalespersonSalesOrder::class));
-Route::resource('invoice-clerk-sales-order', class_basename(InvoiceClerkSalesOrder::class));
+Route::resource('salesperson-sales-order', class_basename(SalespersonSalesOrderController::class));
+Route::resource('invoice-clerk-sales-order', class_basename(InvoiceClerkSalesOrderController::class));
+
+Route::get('invoice-clerk-sales-order/{sales_order}/price-input', [InvoiceClerkSalesOrderPriceInputController::class, "create"])
+    ->name('invoice-clerk-sales-order-price-input');
+
+Route::post('invoice-clerk-sales-order/{sales_order}/price-input', [InvoiceClerkSalesOrderPriceInputController::class, "store"])
+    ->name('invoice-clerk-sales-order-price-input');

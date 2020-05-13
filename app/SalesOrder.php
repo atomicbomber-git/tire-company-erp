@@ -12,4 +12,9 @@ class SalesOrder extends Model
     {
         return $this->belongsTo(Customer::class);
     }
+
+    public function sales_order_items()
+    {
+        return $this->hasMany(SalesOrderItem::class);
+    }
 }

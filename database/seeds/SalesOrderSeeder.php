@@ -27,6 +27,7 @@ class SalesOrderSeeder extends Seeder
                 "sold_at" => $sold_at,
                 "to_be_paid_before" => $to_be_paid_before,
                 "is_paid" => false,
+                "is_approved" => false,
             ]);
 
             $items = \App\Item::query()->inRandomOrder()
@@ -38,7 +39,7 @@ class SalesOrderSeeder extends Seeder
                     "sales_order_id" => $sales_order->id,
                     "item_id" => $item->id,
                     "quantity" => rand(1, 10),
-                    "price" => rand(1, 20) * 50_000,
+                    "price" => null,
                 ]);
             });
         }
