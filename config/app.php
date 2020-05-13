@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Tire Company ERP'),
+    'name' => 'Tire Company ERP',
 
     /*
     |--------------------------------------------------------------------------

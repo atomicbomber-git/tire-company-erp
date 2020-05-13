@@ -13,7 +13,7 @@ class CustomerSeeder extends Seeder
     public function run()
     {
         DB::beginTransaction();
-        factory(App\Customer::class, 100)->create();
+        factory(App\Customer::class, 40)->create();
         DB::commit();
     }
 }

@@ -15,6 +15,13 @@ class CreateSalesOrdersTable extends Migration
     {
         Schema::create('sales_orders', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('customer_id')->constrained();
+
+            $table->string('sold_at')->nullable();
+            $table->dateTime('to_be_paid_before')->nullable();
+            $table->boolean("is_approved")->default(false);
+            $table->boolean("is_paid")->nullable();
+
             $table->timestamps();
         });
     }

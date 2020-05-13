@@ -24,7 +24,9 @@ class CustomerController extends Controller
         $customers = Customer::query()
             ->get();
 
-        return view("customer.index");
+        return view("customer.index", compact(
+            "customers"
+        ));
     }
 
     /**

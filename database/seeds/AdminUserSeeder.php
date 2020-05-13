@@ -13,8 +13,10 @@ class AdminUserSeeder extends Seeder
     public function run()
     {
         factory(App\User::class)->create([
+            "name" => "Administrator",
             "username" => "admin",
             "password" => Hash::make("admin"),
+            "type" => \App\Constants\UserType::ADMINISTRATOR,
         ]);
     }
 }
