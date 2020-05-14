@@ -16,6 +16,7 @@ class InvoiceClerkSalesOrderController extends Controller
     {
         $sales_orders = SalesOrder::query()
             ->with("customer")
+            ->where("is_paid", false)
             ->where("is_approved", false)
             ->orderByDesc("created_at")
             ->get();

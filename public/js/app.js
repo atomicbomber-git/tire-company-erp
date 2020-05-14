@@ -2012,6 +2012,26 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -2063,15 +2083,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     }
   },
   methods: {
-    updateSubtotalAndTotal: function updateSubtotalAndTotal() {
-      var sum = 0;
-      this.m_sales_order.sales_order_items.forEach(function (so_item) {
-        so_item.subtotal = so_item.quantity * so_item.price;
-        sum += so_item.subtotal;
-      });
-      this.total = sum;
-    },
-    onFormSubmit: function onFormSubmit() {
+    onMarkAsPaidButtonClick: function onMarkAsPaidButtonClick() {
       var _this2 = this;
 
       sweetalert2__WEBPACK_IMPORTED_MODULE_0___default.a.fire({
@@ -2084,12 +2096,44 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           throw new Error();
         }
 
-        return axios__WEBPACK_IMPORTED_MODULE_1___default.a.post(_this2.submit_url, _this2.form_data);
+        return axios__WEBPACK_IMPORTED_MODULE_1___default.a.post("/invoice-clerk-sales-order/".concat(_this2.sales_order.id, "/mark-paid"));
+      }).then(function (response) {
+        window.location.replace("/invoice-clerk-sales-order");
+      })["catch"](function (error) {
+        sweetalert2__WEBPACK_IMPORTED_MODULE_0___default.a.fire({
+          icon: "error",
+          titleText: "Error",
+          text: "Invalid data"
+        });
+      });
+    },
+    updateSubtotalAndTotal: function updateSubtotalAndTotal() {
+      var sum = 0;
+      this.m_sales_order.sales_order_items.forEach(function (so_item) {
+        so_item.subtotal = so_item.quantity * so_item.price;
+        sum += so_item.subtotal;
+      });
+      this.total = sum;
+    },
+    onFormSubmit: function onFormSubmit() {
+      var _this3 = this;
+
+      sweetalert2__WEBPACK_IMPORTED_MODULE_0___default.a.fire({
+        icon: "question",
+        titleText: 'Confirmation',
+        text: 'Do you want to proceed?',
+        showCancelButton: true
+      }).then(function (result) {
+        if (!result.value) {
+          throw new Error();
+        }
+
+        return axios__WEBPACK_IMPORTED_MODULE_1___default.a.post(_this3.submit_url, _this3.form_data);
       }).then(function (response) {
         window.location.reload();
       })["catch"](function (error) {
         if (error.isAxiosError) {
-          _this2.error_data = error.response.data;
+          _this3.error_data = error.response.data;
           sweetalert2__WEBPACK_IMPORTED_MODULE_0___default.a.fire({
             icon: "error",
             titleText: "Error",
@@ -64288,7 +64332,25 @@ var render = function() {
       _c("dt", [_vm._v(" Created At: ")]),
       _vm._v(" "),
       _c("dd", [
-        _vm._v(" " + _vm._s(_vm.formatDate(_vm.m_sales_order.created_at)) + " ")
+        _vm._v(" " + _vm._s(_vm.dateFormat(_vm.m_sales_order.created_at)))
+      ]),
+      _vm._v(" "),
+      _c("dt", [_vm._v(" Credit Limit / Remaining Credit Limit: ")]),
+      _vm._v(" "),
+      _c("dd", [
+        _vm._v(
+          "\n                " +
+            _vm._s(
+              _vm.currencyFormat(_vm.m_sales_order.customer.credit_limit)
+            ) +
+            " /\n                " +
+            _vm._s(
+              _vm.currencyFormat(
+                _vm.m_sales_order.customer.remaining_credit_limit
+              )
+            ) +
+            "\n            "
+        )
       ])
     ]),
     _vm._v(" "),
@@ -64353,7 +64415,7 @@ var render = function() {
                       _vm._v(" "),
                       _c("span", { staticClass: "invalid-feedback" }, [
                         _vm._v(
-                          "\n                        " +
+                          "\n                            " +
                             _vm._s(
                               _vm.get(
                                 _vm.error_data,
@@ -64365,7 +64427,7 @@ var render = function() {
                                 false
                               )
                             ) +
-                            "\n                    "
+                            "\n                        "
                         )
                       ])
                     ],
@@ -64404,6 +64466,19 @@ var render = function() {
           ]
         ),
         _vm._v(" "),
+        _vm.get(this.error_data, ["errors", "sales_order_items", 0], false)
+          ? _c("div", { staticClass: "alert alert-danger" }, [
+              _c("i", { staticClass: "fas fa-exclamation-triangle  " }),
+              _vm._v(
+                "\n                " +
+                  _vm._s(
+                    _vm.get(this.error_data, ["errors", "sales_order_items", 0])
+                  ) +
+                  "\n            "
+              )
+            ])
+          : _vm._e(),
+        _vm._v(" "),
         _vm._m(1)
       ]
     )
@@ -64434,7 +64509,7 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "d-flex justify-content-end" }, [
       _c("button", { staticClass: "btn btn-primary" }, [
-        _vm._v("\n                Submit\n            ")
+        _vm._v("\n                    Set Price\n                ")
       ])
     ])
   }
@@ -76884,16 +76959,16 @@ __webpack_require__.r(__webpack_exports__);
 /*!*************************************!*\
   !*** ./resources/js/dateHelpers.js ***!
   \*************************************/
-/*! exports provided: formatDate */
+/*! exports provided: dateFormat */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "formatDate", function() { return formatDate; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "dateFormat", function() { return dateFormat; });
 /* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js");
 /* harmony import */ var moment__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(moment__WEBPACK_IMPORTED_MODULE_0__);
 
-function formatDate(value) {
+function dateFormat(value) {
   return moment__WEBPACK_IMPORTED_MODULE_0___default()(value).format("DD MMMM Y hh:mm:ss");
 }
 

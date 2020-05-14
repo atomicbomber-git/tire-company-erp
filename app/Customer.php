@@ -19,8 +19,9 @@ class Customer extends Model
             ->groupBy("sales_order_id");
 
         $sales_orders = SalesOrder::query()
-            ->select("total.total", "customer_id")
+            ->select(DB::raw("SUM(total.total) AS total"), "customer_id")
             ->where("is_paid", false)
+            ->groupBy("customer_id")
             ->leftJoinSub($sales_order_items, "total", "total.sales_order_id", "=", "sales_orders.id");
 
         return Customer::query()

@@ -10,7 +10,7 @@
                 <th> # </th>
                 <th> Name </th>
                 <th> Address </th>
-                <th class="text-right"> Credit Limit (Rp.) </th>
+                <th class="text-right"> Credit Limit / Remaining (Rp.) </th>
                 <th class="text-center"> Control </th>
             </tr>
             </thead>
@@ -22,7 +22,8 @@
                     <td> {{ $customer->name }} </td>
                     <td> {{ $customer->address }} </td>
                     <td class="text-right">
-                        {{ \App\Helpers\Formatter::currency($customer->credit_limit) }}
+                        {{ \App\Helpers\Formatter::currency($customer->credit_limit) }} /
+                        {{ \App\Helpers\Formatter::currency($customer->remaining_credit_limit) }}
                     </td>
                     <td class="d-flex justify-content-center">
                         <a

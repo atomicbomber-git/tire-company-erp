@@ -4,7 +4,12 @@
             <dt> Customer: </dt>
             <dd> {{ m_sales_order.customer.name }} </dd>
             <dt> Created At: </dt>
-            <dd> {{ formatDate(m_sales_order.created_at) }} </dd>
+            <dd> {{ dateFormat(m_sales_order.created_at) }}</dd>
+            <dt> Credit Limit / Remaining Credit Limit: </dt>
+            <dd>
+                {{ currencyFormat(m_sales_order.customer.credit_limit) }} /
+                {{ currencyFormat(m_sales_order.customer.remaining_credit_limit) }}
+            </dd>
         </dl>
 
         <form @submit.prevent="onFormSubmit">
@@ -50,9 +55,24 @@
                     </tr>
                 </tfoot>
             </table>
+
+            <div class="alert alert-danger"
+                v-if="get(this.error_data, ['errors', 'sales_order_items', 0], false)"
+            >
+                <i class="fas fa-exclamation-triangle  "></i>
+                {{ get(this.error_data, ["errors", "sales_order_items", 0]) }}
+            </div>
+
             <div class="d-flex justify-content-end">
+<!--                <button-->
+<!--                    v-if="this.sales_order.is_approved"-->
+<!--                    class="btn btn-success mr-2"-->
+<!--                    @click="onMarkAsPaidButtonClick" type="button">-->
+<!--                    Mark As Paid-->
+<!--                </button>-->
+
                 <button class="btn btn-primary">
-                    Submit
+                    Set Price
                 </button>
             </div>
         </form>
@@ -119,6 +139,29 @@
         },
 
         methods: {
+            onMarkAsPaidButtonClick() {
+                Swal.fire({
+                    icon: "question",
+                    titleText: 'Confirmation',
+                    text: 'Do you want to proceed?',
+                    showCancelButton: true,
+                }).then(result => {
+                    if (!result.value) { throw new Error() }
+                    return axios.post(
+                        `/invoice-clerk-sales-order/${this.sales_order.id}/mark-paid`
+                    )
+                }).then(response => {
+                    window.location.replace(`/invoice-clerk-sales-order`)
+                })
+                .catch(error => {
+                    Swal.fire({
+                        icon: "error",
+                        titleText: "Error",
+                        text: "Invalid data",
+                    })
+                })
+            },
+
             updateSubtotalAndTotal() {
                 let sum = 0
 

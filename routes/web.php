@@ -45,3 +45,6 @@ Route::get('invoice-clerk-sales-order/{sales_order}/price-input', [InvoiceClerkS
 
 Route::post('invoice-clerk-sales-order/{sales_order}/price-input', [InvoiceClerkSalesOrderPriceInputController::class, "store"])
     ->name('invoice-clerk-sales-order-price-input');
+
+Route::post('invoice-clerk-sales-order/{sales_order}/mark-paid', class_basename(\App\Http\Controllers\InvoiceClerkSalesOrderMarkPaidController::class))
+    ->name('invoice-clerk-sales-order-mark-paid');

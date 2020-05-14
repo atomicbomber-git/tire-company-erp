@@ -20,6 +20,9 @@ class InvoiceClerkSalesOrderPriceInputController extends Controller
             "sales_order_items.item"
         ]);
 
+        $sales_order->customer->remaining_credit_limit = Customer::remainingCreditLimitQuery()->where("id", $sales_order->customer_id)
+            ->value("remaining_credit_limit");
+
         return response()->view("invoice-clerk-sales-order-price-input.create", compact(
             "sales_order"
         ));
@@ -27,8 +30,6 @@ class InvoiceClerkSalesOrderPriceInputController extends Controller
 
     public function store(Request $request, SalesOrder $sales_order)
     {
-        $credit_limit = $sales_order->customer->credit_limit;
-
         $initial_remaining_credit_limit = Customer::remainingCreditLimitQuery()
             ->where("id", $sales_order->customer_id)
             ->value("remaining_credit_limit");
@@ -49,14 +50,19 @@ class InvoiceClerkSalesOrderPriceInputController extends Controller
             ]);
         }
 
+        $sales_order->update([
+           "is_approved" => true,
+        ]);
+
         $remaining_credit_limit = Customer::remainingCreditLimitQuery()
             ->where("id", $sales_order->customer_id)
             ->value("remaining_credit_limit");
 
         $request->validate([
-            "sales_order_items" => function($attribute, $value, $fail) use($remaining_credit_limit, $initial_remaining_credit_limit) {
+            "sales_order_items" => function($attribute, $value, $fail) use($sales_order, $remaining_credit_limit, $initial_remaining_credit_limit) {
                 if ($remaining_credit_limit < 0) {
-                    $fail("Remaining credit limit is " . Formatter::currency($initial_remaining_credit_limit) );
+                    $fail("Remaining credit limit for {$sales_order->customer->name} is " . Formatter::currency($initial_remaining_credit_limit) );
+                    DB::rollBack();
                 }
             }
         ]);
