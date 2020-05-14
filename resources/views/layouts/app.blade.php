@@ -157,5 +157,14 @@
         </div>
     </main>
 </div>
+
+<script>
+    window.onload = function () {
+        window.setTimeout(() => {
+            $(".message").fadeOut()
+        }, 5000)
+    }
+</script>
+
 </body>
 </html>

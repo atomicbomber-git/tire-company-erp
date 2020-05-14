@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Customer;
+use App\SalesOrder;
+use App\SalesOrderItem;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CustomerController extends Controller
 {
@@ -17,11 +20,24 @@ class CustomerController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Http\Response|\Illuminate\View\View
      */
     public function index()
     {
+        $sales_order_items = SalesOrderItem::query()
+            ->select("sales_order_id")
+            ->selectRaw("COALESCE(SUM(price * quantity), 0) AS total")
+            ->groupBy("sales_order_id");
+
+        $sales_orders = SalesOrder::query()
+            ->where("is_paid", false)
+            ->leftJoinSub($sales_order_items, "total", "total.sales_order_id", "=", "sales_orders.id");
+
         $customers = Customer::query()
+            ->selectRaw("customers.*")
+            ->addSelect(DB::raw("COALESCE(sales_orders_total.total, 0) AS used_credit_limit"))
+            ->addSelect(DB::raw("credit_limit - COALESCE(sales_orders_total.total, 0) AS remaining_credit_limit"))
+            ->leftJoinSub($sales_orders, "sales_orders_total", "sales_orders_total.customer_id", "=", "customers.id")
             ->get();
 
         return view("customer.index", compact(

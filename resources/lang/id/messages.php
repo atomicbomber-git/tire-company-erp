@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     'create' => [
         'success' => 'Data berhasil ditambahkan.',
         'failure' => 'Data gagal ditambahkan.',
@@ -16,5 +15,4 @@ return [
         'success' => 'Data berhasil dihapus.',
         'failure' => 'Data gagal dihapus.',
     ]
-
 ];

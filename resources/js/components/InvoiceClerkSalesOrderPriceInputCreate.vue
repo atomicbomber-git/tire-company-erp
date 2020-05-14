@@ -14,8 +14,8 @@
                     <th> #</th>
                     <th> Item</th>
                     <th class="text-right"> Qty. </th>
-                    <th class="text-right"> Price </th>
-                    <th class="text-right"> Subtotal </th>
+                    <th class="text-right"> Price (Rp.) </th>
+                    <th class="text-right"> Subtotal (Rp.) </th>
                 </tr>
                 </thead>
 
@@ -25,12 +25,17 @@
                     <td> {{ sales_order_item.item.name }}</td>
                     <td class="text-right"> {{ sales_order_item.quantity }}</td>
                     <td class="text-right">
-                        <input
+                        <vue-cleave
                             class="form-control form-control-sm text-right"
+                            :class="{ 'is-invalid': get(error_data, [`errors`, `sales_order_items.${index}.price`, 0], false) }"
                             v-model.number="sales_order_item.price"
-                            type="number"
-                            step="any"
+                            :options="{ numeral: true }"
                         >
+                        </vue-cleave>
+
+                        <span class="invalid-feedback">
+                            {{ get(error_data, [`errors`, `sales_order_items.${index}.price`, 0], false) }}
+                        </span>
                     </td>
                     <td class="text-right"> {{ currencyFormat(sales_order_item.subtotal) }} </td>
                 </tr>
@@ -40,8 +45,8 @@
                         <td></td>
                         <td></td>
                         <td></td>
-                        <td class="text-right"> Total: </td>
-                        <td class="text-right"> {{ this.total }} </td>
+                        <td class="text-right"> Total (Rp.): </td>
+                        <td class="text-right"> {{ currencyFormat(this.total) }} </td>
                     </tr>
                 </tfoot>
             </table>
@@ -61,7 +66,14 @@
     export default {
         props: {
             "sales_order": Object,
+            "submit_url": String,
+            "redirect_url": String,
         },
+
+        components: {
+            VueCleave: require("vue-cleave-component")
+        },
+
         name: "InvoiceClerkSalesOrderPriceInputCreate",
 
         data() {
@@ -95,12 +107,14 @@
 
         computed: {
             form_data() {
-                return this.m_sales_order.sales_order_items.map(so_item => {
-                    return {
-                        id: so_item.id,
-                        price: so_item.price,
-                    }
-                })
+                return {
+                    sales_order_items: this.m_sales_order.sales_order_items.map(so_item => {
+                        return {
+                            id: so_item.id,
+                            price: so_item.price,
+                        }
+                    })
+                }
             },
         },
 
@@ -109,7 +123,7 @@
                 let sum = 0
 
                 this.m_sales_order.sales_order_items.forEach(so_item => {
-                    so_item.subtotal = 9999
+                    so_item.subtotal = so_item.quantity * so_item.price
                     sum += so_item.subtotal
                 })
 
@@ -124,11 +138,20 @@
                     showCancelButton: true,
                 }).then(result => {
                     if (!result.value) { throw new Error() }
-
-                    return axios.post('')
+                    return axios.post(this.submit_url, this.form_data)
+                }).then(response => {
+                    window.location.reload()
                 })
                 .catch(error => {
+                    if (error.isAxiosError) {
+                        this.error_data = error.response.data
 
+                        Swal.fire({
+                            icon: "error",
+                            titleText: "Error",
+                            text: "Invalid data",
+                        })
+                    }
                 })
             },
         },

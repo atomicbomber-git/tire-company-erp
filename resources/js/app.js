@@ -26,7 +26,14 @@ files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(
  */
 
 Vue.mixin({
+    data() {
+      return {
+          error_data: null,
+      }
+    },
+
     methods: {
+        get: require("lodash").get,
         ...require("./numeralHelpers.js"),
         ...require("./dateHelpers.js"),
     }

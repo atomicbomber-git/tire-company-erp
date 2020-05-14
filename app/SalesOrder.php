@@ -4,6 +4,9 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property Customer customer
+ */
 class SalesOrder extends Model
 {
     protected $guarded = [];
