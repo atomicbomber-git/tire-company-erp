@@ -3,14 +3,6 @@
     <div>
         <h1> Sales Orders</h1>
 
-        <div class="d-flex justify-content-end py-3">
-            <a
-                href="{{ route("sales-order.create") }}"
-                class="btn btn-primary">
-                Create New Sales Order
-            </a>
-        </div>
-
         @include("layouts._messages")
 
         <table class="table table-striped table-sm">
